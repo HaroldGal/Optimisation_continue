@@ -1,0 +1,6 @@
+reset;
+model projetL.mod;
+data 1.dat;
+option solver gurobi;
+solve;
+display x,y;

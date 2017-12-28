@@ -1,7 +1,8 @@
-#Version de Boussad
-
 param n; 
 param m; 
+
+set I={1..m};
+set J={1..n};
 
 param c{I,J}; 
 param a{I,J} ;
