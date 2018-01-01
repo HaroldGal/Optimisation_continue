@@ -45,16 +45,31 @@ ub(1:m*n)=Inf; %en suivant les instructions sur la page info de ga
 lb = zeros(2*m*n,1)';
 %intervalle = m*n+1:2*m*n;
 
-X = ga(object, 2*m*n, A,b,[],[],lb,ub,[]);
-disp(X);
+X = ga(object, 2*m*n, A,b,[],[],lb,ub,[],[m*n+1:m*n]);
+%X = [6 8 8 30 6 32 2 2 7 2 3 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 0 0 0 0 0 0 0 0 0 0 0 0 0 11 0 0 0 0 0 0 0 0 11 0 15 11 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 0 0 0 11 0 0 15 0 0 0 0 0 0 15 0 0 0 0 0 0 0 0 0 0 0 0 0 8 10 8 0 0 0 0 0 0 0 0 0 8 0 0 0 0 0 0 0 8 0 0 8 0 6 0 6 0 7 0 9 0 0 0 9 0 5 0 7 0 0 3 0 0 5 0 0 17 7 0 0 0 0 0 0 0 0 0 0 0 0 37 18 0 0 0 21 4 0 3 4 1 24 44 3 0 3 0 3 0 0 2 19 0 1 4 0 1 0 4 0 2 0 3 0 22 31 2 0 0 0 4 0 0 33 14 0 3 0 4 4 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1];
+fid=fopen('data.txt','w');
+   fprintf(fid,'matrice X trouvé avec ga \n');
+   fprintf(fid,'%d ',X);
+   fprintf(fid, '\nresultat optimal : \n');
+   fprintf(fid, '%d\n\n', object(X));
+
 %patternsearch(object,2*m*n,A,b,[],[],lb,ub,[],intervalle);
 
 %patternsearch 
 
-x0 = zeros(2*m*n,1);
+x0 = X;
+%{
+X = patternsearch(object,x0,A,b,[],[],lb,ub);
+   fprintf(fid,'matrice X trouvé avec patternsearch \n');
+   fprintf(fid,'%d ',X);
+   fprintf(fid, '\nresultat optimal : \n');
+   fprintf(fid, '%d\n\n', object(X));
 
-%patternsearch(object,x0,A,b,[],[],lb,ub)
+%}
 
+fclose(fid);
+ 
+edit data.txt
 
 % question 6 
 
@@ -125,7 +140,7 @@ end
 
 iterateur=iterateur+m*n; % m+n+m*n
 %a droite
-
+%{
 for i=1:m
     for j=1:n 
         A(iterateur+(i-1)*n+j,(i-1)*n+j)=-1;
@@ -133,7 +148,7 @@ for i=1:m
         b(iterateur+(i-1)*n+j)=0;
     end     
 end
-
+%}
 
 % taille de la matrice A ligne : m+n+2*m*n
 % colonne : 2*m*n
