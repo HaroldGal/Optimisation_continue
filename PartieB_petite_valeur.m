@@ -26,7 +26,7 @@ mm_=[
 [    0,    0,    0,    0]
 ];
 
-rng(3);
+%rng(3);
 %run('1.m') %c'est pas la bonne commande mais je m'en souviens plus 
 
 %p.s: les fichiers en seront pas dans le même dossier 
@@ -38,15 +38,21 @@ object= @(x) objective(x,m,n,a,c); %a et c donnés par les scripts
 
 % Les contraintes
 [A,b]=contraintes(AA, MM, mm_, m, n);
-disp(A);
-disp(b);
 %Les variables 
 ub = ones(2*m*n,1)';
 ub(1:m*n)=Inf; %en suivant les instructions sur la page info de ga
 lb = zeros(2*m*n,1)';
 %intervalle = m*n+1:2*m*n;
-opti = optimoptions('ga','MaxStallGenerations',50,'FunctionTolerance', 1e-4, 'MaxGenerations',3200);
-[X,fval] = ga(object, 2*m*n, A,b,[],[],lb,ub,[],1:2*m*n,opti);
+x0 =[    6,    0,    0,    0,    0,    10,    0,    0,    0,    0,    8,    0    0,    0,    0,    30,    1,    0,    0,    0,    0,    1,    0,    0,    0,    0,    1,    0    0,    0,    0,    1];
+%x0 = rand(1,2*m*n).*10;
+opti = gaoptimset('InitialPopulation',x0, 'TimeLimit',60, 'PopulationSize', 3200,'PopulationType','doubleVector');
+[X,fval,exitFlag,Output] = ga(object, 2*m*n, A,b,[],[],lb,ub,[],m*n+1:2*m*n,opti);
+
+
+fprintf('The number of generations was : %d\n', Output.generations);
+fprintf('The number of function evaluations was : %d\n', Output.funccount);
+fprintf('The best function value found was : %g\n', fval);
+
 %X = [6 8 8 30 6 32 2 2 7 2 3 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 8 0 0 0 0 0 0 0 0 0 0 0 0 0 11 0 0 0 0 0 0 0 0 11 0 15 11 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 0 0 0 11 0 0 15 0 0 0 0 0 0 15 0 0 0 0 0 0 0 0 0 0 0 0 0 8 10 8 0 0 0 0 0 0 0 0 0 8 0 0 0 0 0 0 0 8 0 0 8 0 6 0 6 0 7 0 9 0 0 0 9 0 5 0 7 0 0 3 0 0 5 0 0 17 7 0 0 0 0 0 0 0 0 0 0 0 0 37 18 0 0 0 21 4 0 3 4 1 24 44 3 0 3 0 3 0 0 2 19 0 1 4 0 1 0 4 0 2 0 3 0 22 31 2 0 0 0 4 0 0 33 14 0 3 0 4 4 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1];
 fid=fopen('data.txt','w');
    fprintf(fid,'matrice X trouvé avec ga \n');
@@ -55,16 +61,11 @@ fid=fopen('data.txt','w');
    fprintf(fid, '%d\n\n', fval);
 
 %patternsearch 
-%{
-x0 = X';
-
 X = patternsearch(object,x0,A,b,[],[],lb,ub);
    fprintf(fid,'matrice X trouvé avec patternsearch \n');
    fprintf(fid,'%d ',X);
    fprintf(fid, '\nresultat optimal : \n');
    fprintf(fid, '%d\n\n', object(X));
-
-%}
 
 fclose(fid);
  
