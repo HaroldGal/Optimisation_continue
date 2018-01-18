@@ -1,4 +1,4 @@
-function PartieB()
+function PartieB2()
 
 % question 5 
 
@@ -154,9 +154,9 @@ iterateur=iterateur+m*n;
 % a gauche 
 for i=1:m
     for j=1:n 
-        A(iterateur+(i-1)+j,(i-1)+j)=1;
-        A(iterateur+(i-1)+j,n*m+(i-1)+j)=-MM(i); %n*m pour passer aux y
-        b(iterateur+(i-1)+j)=0;
+        A(iterateur+(i-1)*n+j,(i-1)+j)=1;
+        A(iterateur+(i-1)*n+j,n*m+(i-1)+j)=-MM(i); %n*m pour passer aux y
+        b(iterateur+(i-1)*n+j)=0;
     end     
 end
 
@@ -164,9 +164,9 @@ iterateur=iterateur+m*n;
 %a droite
 for i=1:m
     for j=1:n 
-        A(iterateur+(i-1)+j,(i-1)+j)=-1;
-        A(iterateur+(i-1)+j,n*m+(i-1)+j)=mm_(i,j); 
-        b(iterateur+(i-1)+j)=0;
+        A(iterateur+(i-1)*n+j,(i-1)+j)=-1;
+        A(iterateur+(i-1)*n+j,n*m+(i-1)+j)=mm_(i,j); 
+        b(iterateur+(i-1)*n+j)=0;
     end     
 end
 iterateur = iterateur+m*n;
