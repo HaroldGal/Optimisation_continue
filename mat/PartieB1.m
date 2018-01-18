@@ -49,10 +49,10 @@ Idiscrete = m*n+1:2*m*n;
 
 f = zeros(1,2*m*n); % assumes x0 is the initial point
 x0 = linprog(f,A,b,Aeq,Beq,lb,ub);
-
+%{
 %opti = gaoptimset('InitialPopulation',x0', 'TimeLimit',60, 'PopulationSize', m*n*2*10,'PopulationType','doubleVector');
 opti = gaoptimset('TimeLimit',60, 'PopulationSize', m*n*2*10,'PopulationType','doubleVector');
-[X,fval,exitFlag,Output] = ga(object, 2*m*n, A,b,Aeq,Beq,lb,ub,[],Idiscrete,opti);
+%[X,fval,exitFlag,Output] = ga(object, 2*m*n, A,b,Aeq,Beq,lb,ub,[],Idiscrete,opti);
 
 
 fprintf('The number of generations was : %d\n', Output.generations);
@@ -65,14 +65,23 @@ fid=fopen('dataB1.txt','w');
    fprintf(fid, '\nresultat optimal : \n');
    fprintf(fid, '%d\n\n', fval);
 fclose(fid);
-%{
+%}
 %patternsearch 
-X = patternsearch(object,x0,A,b,[],[],lb,ub);
+fid=fopen('dataB1.txt','w');
+opts = optimoptions('patternsearch','ScaleMesh','off','TolMesh',0.9);
+X = patternsearch(object,x0,A,b,[],[],lb,ub,[],opts);
    fprintf(fid,'matrice X trouvé avec patternsearch \n');
    fprintf(fid,'%d ',X);
    fprintf(fid, '\nresultat optimal : \n');
    fprintf(fid, '%d\n\n', object(X));
 
+X = transformeContDiscret(X);
+   fprintf(fid,'matrice X trouvé avec patternsearch après transformation \n');
+   fprintf(fid,'%d ',X);
+   fprintf(fid, '\nresultat optimal : \n');
+   fprintf(fid, '%d\n\n', object(X));
+   
+   
 f = [reshape(a,1,n*m) reshape(c,1,m*n)];
    [X,fval] = linprog(f,A,b,[],[],lb,ub);
    fprintf(fid,'matrice X trouvé avec linprog \n');
@@ -80,8 +89,14 @@ f = [reshape(a,1,n*m) reshape(c,1,m*n)];
    fprintf(fid, '\nresultat optimal : \n');
    fprintf(fid, '%d\n\n', fval);
    
+X = transformeContDiscret(X);   
+   fprintf(fid,'matrice X trouvé avec linprog après transformation\n');
+   fprintf(fid,'%d ',X);
+   fprintf(fid, '\nresultat optimal : \n');
+   fprintf(fid, '%d\n\n', object(X));
+   
 fclose(fid);
-%}
+
 end 
 
 function object=objective(X,m,n,a,c) % X est celui que l'on cherche 
@@ -139,9 +154,9 @@ iterateur=iterateur+m;
 % a gauche 
 for i=1:m
     for j=1:n 
-        A(iterateur+(i-1)+j,(i-1)+j)=1;
-        A(iterateur+(i-1)+j,n*m+(i-1)+j)=-MM(i); %n*m pour passer aux y
-        b(iterateur+(i-1)+j)=0;
+        A(iterateur+(i-1)*n+j,(i-1)*n+j)=1;
+        A(iterateur+(i-1)*n+j,n*m+(i-1)*n+j)=-MM(i); %n*m pour passer aux y
+        b(iterateur+(i-1)*n+j)=0;
     end     
 end
 
@@ -150,10 +165,19 @@ iterateur=iterateur+m*n;
 
 for i=1:m
     for j=1:n 
-        A(iterateur+(i-1)+j,(i-1)+j)=-1;
-        A(iterateur+(i-1)+j,n*m+(i-1)+j)=mm_(i,j); 
-        b(iterateur+(i-1)+j)=0;
+        A(iterateur+(i-1)*n+j,(i-1)*n+j)=-1;
+        A(iterateur+(i-1)*n+j,n*m+(i-1)*n+j)=mm_(i,j); 
+        b(iterateur+(i-1)*n+j)=0;
     end     
 end
 
 end 
+
+function Xdiscr=transformeContDiscret(xcont)
+
+Xdiscr=xcont;
+for i=length(xcont)/2+1:length(xcont)
+    Xdiscr(i)=1*(xcont(i)>0);
+end
+
+end
